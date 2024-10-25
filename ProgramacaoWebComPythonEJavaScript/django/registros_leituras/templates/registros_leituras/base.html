@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anotações</title>
+</head>
+<body>
+    <header>
+        <ul>
+            <li><a href="{% url 'index'%}">Principal</a></li>
+            <li><a href="{% url 'topics'%}">Todos os topicos</a></li>
+        </ul>
+    </header>
+    {% block content %}{% endblock content %} 
+</body>
+</html>

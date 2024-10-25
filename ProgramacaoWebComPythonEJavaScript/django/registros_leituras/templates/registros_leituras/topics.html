@@ -1,0 +1,13 @@
+{% extends "registros_leituras/base.html" %}
+
+{% block content %}
+    <h1>Topicos:</h1>
+    <ul>
+        {% for topic in topics %}
+            <li>{{ topic }}</li>
+        {% empty %}
+            <li>Não há tópicos cadastrados</li>
+        {% endfor%}
+    </ul>
+
+{% endblock content %}
