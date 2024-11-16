@@ -14,13 +14,13 @@ print(f'mínimo:', min(listaJuntas))
 print(f'máximo:', max(listaJuntas))
 
 listaJuntas.append(12)
-print(listaJuntas)
+print("adicionadno 12: ",listaJuntas)
 listaJuntas.pop()
-print(listaJuntas)
+print("removendo 12: ",listaJuntas)
 listaJuntas.insert(3,21)
-print(listaJuntas)
+print("adicionadno 21 na posição 3: ",listaJuntas)
 listaJuntas.pop(3)
-print(listaJuntas)
+print("removendo elemento da posição 3: ",listaJuntas)
 
 print("o valor 10 está na lista? ", end='')
 print(10 in listaJuntas)
@@ -28,3 +28,8 @@ print(10 in listaJuntas)
 for i in listaJuntas:
     print(i)
 
+print("adicionando mais de um elemento")
+nomes = ["joao","paulo","ricardo"]
+nomes.extend(['felipe','emerson'])
+
+print("lista de nomes: ",nomes)

@@ -1,0 +1,9 @@
+{% extends "registros_leituras/base.html" %}
+
+{% block content %}
+    <form action="{% url 'new_topic' %}" method="post">
+        {% csrf_token %}<!-- todo formulario deve ter isso em django -->
+        {{ form.as_p }}<!-- maneira que o django usa para criar o formulario de acordo django form  -->
+        <button type="submit">Adicionar</button>
+    </form>
+{% endblock content %}

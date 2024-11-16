@@ -1,56 +1,75 @@
-from django.shortcuts import render
-from django.http import HttpResponse,JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-
-import pandas as pd
-import numpy as np
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+from . import functions as fn
 from datetime import datetime
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-
+import requests
+from bs4 import BeautifulSoup
 
 @api_view(['GET'])
-def boasVindas(request):
+def instrucoes(request):
+    # Rota inicial da api. Instruir o desenvolvedor a solicitar corretamente os dados  
     if request.method == 'GET':
-        return Response("olá envie uma data e a taxa de referência que você deseja consultar")
+        return Response({"msg":"Siga o exemplo da query parameters /dados?data=AAAA-MM-DD&slcTaxa=EUR para obter informações sobre as taxas de referência!"})
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
 def buscaDados(request):
+    # pega os query parameters da url
     data = request.GET.get('data')
     slcTaxa = request.GET.get('slcTaxa')
 
     if data and slcTaxa:
         try:
+            # verifica a validade da data inserida 
             data = datetime.strptime(data,'%Y-%m-%d').date()            
             data1 = str(data)
             data1 = data1.replace('-','')    
             data_formatada = data.strftime('%d/%m/%Y')
-            print(data1,data_formatada)
 
         except:
             return Response({"error": "O formato da data está incorreto ",
-                             "data":"use AAAA-MM-DD, somente números",
+                             "data":"use AAAA-MM-DD",
                              "exemplo":"2024-12-31"}, status=400)
         
         
         url = f'https://www2.bmf.com.br/pages/portal/bmfbovespa/lumis/lum-taxas-referenciais-bmf-enUS.asp?Data={data_formatada}&Data1={data1}&slcTaxa={slcTaxa}'
         
-        chrome_options = Options()
-        chrome_options.add_argument("--headless") 
-        chrome_options.add_argument("--disable-gpu") 
-        navegador = webdriver.Chrome(options=chrome_options)
-        navegador.get(url)
-        tabela = navegador.find_element(By.TAG_NAME,'tbody')
-        print(tabela)
+        try:
+            #responsável por fazer a requisição ao site da url
+            response = requests.get(url,timeout=10)
+            
+            #tenta evitar erros por conexão lenta
+            if not response:
+                contador = 3
+                while contador > 0:
+                    response = requests.get(url,timeout=10)
+                    contador -=1
 
-        return Response(tabela)
+            #retorna a estrutura HTML da página
+            pagina = BeautifulSoup(response.text, 'html.parser')
+
+        except requests.exceptions.RequestException as e:
+            return Response({"msg":"Tempo de requisição excedido. Tente novamente!"},status=504)
+
+        tabela = pagina.find('table')        
+        
+        if not tabela:
+            return Response({"titulo":"Os dados não foram encontrados!",
+                             "msg":"parâmetro de busca inválido ou sem informações para o período escolhido!"},status=400)
+        
+        #extração das informações da página.
+        cabecalho = tabela.find_all('th')        
+        tituloColunaUm = cabecalho[0].text.strip()
+        tituloColunaDois = cabecalho[1].text.strip()                
+        corpoTabela = pagina.find_all('td')
+
+        #agrupando os dados para retorno da requisição
+        dados = fn.extrairDados(corpoTabela=corpoTabela,colunaUm=tituloColunaUm,colunaDois=tituloColunaDois)       
+        
+        return Response(dados,status=200)
     else:
-        return Response({"error": "Parâmetros 'data' e 'slcTaxa' são obrigatórios"}, status=400)
+        return Response({"msg": "Parâmetros 'data' e 'slcTaxa' são obrigatórios"}, status=400)
 

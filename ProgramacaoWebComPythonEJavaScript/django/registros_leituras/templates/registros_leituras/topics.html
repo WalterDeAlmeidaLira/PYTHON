@@ -4,10 +4,12 @@
     <h1>Topicos:</h1>
     <ul>
         {% for topic in topics %}
-            <li>{{ topic }}</li>
-        {% empty %}
+            <li><a href="{% url 'topic' topic.id %}">{{ topic.text }}</a></li>
+        {% empty %} <!-- empty significa que se nao houver topicos ele vai renderizar o topico debaixo -->
             <li>Não há tópicos cadastrados</li>
         {% endfor%}
     </ul>
+
+    <a href="{% url 'new_topic' %}">Criar novo topico</a>
 
 {% endblock content %}

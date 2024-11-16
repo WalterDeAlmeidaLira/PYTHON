@@ -1,7 +1,17 @@
 {% extends "registros_leituras/base.html" %}
 
-{% blcok content %}
+{% block content %}
 
-    
-
+    <h3>Tópico: {{ topic.text }} </h3>
+    <ul>    
+        {% for entry in entries %}
+            <li>
+                <!-- | date:'M d, Y H:i' -->
+                <p>{{ entry.date_added | date:'M d, Y H:i' }}</p>
+                <p>{{ entry.text | linebreaks }}</p>
+            </li>
+        {% empty %}
+            <li>Não há anotações no tópico</li>
+        {% endfor%}
+    </ul>
 {% endblock content %}

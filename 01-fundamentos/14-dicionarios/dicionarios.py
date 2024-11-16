@@ -4,7 +4,12 @@ carro = {
     'ano':2024
 }
 
-print(f'carro {carro["modelo"]}')
+print("retorna as chaves de um dicionário ",carro.keys())
+print("retorna os valores de um dicionário ",carro.values())
+print(f'carro: {carro["modelo"]}')
 
 for i in carro.keys():
-    print(carro[i])
+    print(i)
+
+for i in carro.values():
+    print(i)
