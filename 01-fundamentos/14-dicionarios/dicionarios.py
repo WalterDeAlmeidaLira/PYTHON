@@ -13,3 +13,6 @@ for i in carro.keys():
 
 for i in carro.values():
     print(i)
+
+for x,y in carro.items():
+    print(x,y)
