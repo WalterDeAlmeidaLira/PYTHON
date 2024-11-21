@@ -1,0 +1,12 @@
+{% extends 'registros_leituras/base.html' %}
+
+{% block content %}
+    <p><a href="{% url 'topic' topic.id %}">{{ topic }}</a></p>
+    <p>Adicione uma nova parada: </p>
+    <form action="{% url 'new_entry' topic.id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Adicionar</button>
+    </form>
+
+{% endblock content %}

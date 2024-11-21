@@ -1,0 +1,14 @@
+{% extends 'registros_leituras/base.html' %}
+
+{% block content %}
+    <p><a href="{% url 'topic' topic.id %}">{{ topic.text }}</a></p>
+    
+    <p>Edite sua anotação: </p>
+    
+    <form action="{% url 'edit_entry' entry.id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Salvar</button>
+    </form>
+
+{% endblock content %}
